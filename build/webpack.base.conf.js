@@ -33,7 +33,7 @@ module.exports = {
         // 自动补全的扩展名
         alias: {
             'vue$': 'vue/dist/vue.esm.js',
-            '@': resolve('src'),
+            '@': resolve('src')
         }
     },
     module: {
