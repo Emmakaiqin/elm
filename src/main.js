@@ -6,11 +6,13 @@ import VueRouter from "vue-router";
 import goods from "./components/goods/goods.vue";
 import ratings from "./components/ratings/ratings.vue";
 import seller from "./components/seller/seller.vue";
+import VueResource from 'vue-resource'
 import './assets/css/common.less'
 
 Vue.config.productionTip = false;
 
 Vue.use(VueRouter); //使用路由
+Vue.use(VueResource); //使用vue-resouce
 
 const routes = [ //定义路由
     { path: '/goods', component: goods },
