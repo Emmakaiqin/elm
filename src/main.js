@@ -8,6 +8,7 @@ import ratings from "./components/ratings/ratings.vue";
 import seller from "./components/seller/seller.vue";
 import VueResource from 'vue-resource'
 import './assets/css/common.less'
+import './assets/css/font-awesome.min.css'
 
 Vue.config.productionTip = false;
 

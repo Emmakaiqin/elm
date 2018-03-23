@@ -1,5 +1,30 @@
-body,html{padding:0;margin:0;box-sizing:border-box;}
+body,html{
+    line-height:1;
+    font-weight:200;
+    //12px/1.5 字体12px，line-height:1.5
+    font-family:12px/1.5 Helvetica, Tahoma, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    padding:0;
+    margin:0;
+    box-sizing:border-box;
+}
+article,aside,details,figcaption,figure,footer,header,hgroup,main,menu,nav,section,summary {
+  display: block;
+}
 a{text-decoration:none;}
 .border-bottom-1(@color){//border-bottom为1px，颜色传值
     border-bottom:1px solid @color;
+}
+.bg-img(@imgSrc){background-image:url(@imgSrc);}
+.clearfix{
+    display:inline-block;
+    &::after{
+        display:block;
+        content:'';
+        height:0;
+        line-height:0;
+        clear:both;
+        visibility: hidden;
+    }
 }

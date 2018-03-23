@@ -13,6 +13,18 @@ const portfinder = require('portfinder')
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
 
+//模拟服务器返回数据--开始
+const express = require('express')
+const appExpress = express()
+var appData = require('../data.json')
+const seller = appData.seller
+const goods = appData.goods
+const ratings = appData.ratings
+
+var apiRouter = express.Router()
+
+appExpress.use('/api', apiRouter)
+
 
 const devWebpackConfig = merge(baseWebpackConfig, {
     module: {
@@ -41,6 +53,27 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         quiet: true, // necessary for FriendlyErrorsPlugin
         watchOptions: {
             poll: config.dev.poll,
+        },
+        //express模拟数据接口
+        before(appExpress) {
+            appExpress.get('/api/seller', function(req, res) {
+                res.json({
+                    errno: 0,
+                    data: seller
+                })
+            });
+            appExpress.get('/api/goods', function(req, res) {
+                res.json({
+                    errno: 0,
+                    data: goods
+                })
+            });
+            appExpress.get('/api/ratings', function(req, res) {
+                res.json({
+                    errno: 0,
+                    data: ratings
+                })
+            });
         }
     },
     plugins: [

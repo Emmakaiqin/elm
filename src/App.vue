@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <!--header-->
-    <v-header></v-header>
+    <!--:seller="seller" :seller中seller为传给子组件的名称 “seller”为父组件中的属性值-->
+    <v-header :seller="seller"></v-header>
     <!--header end-->
     <!--tab-->
     <div class="tab">
@@ -24,7 +25,8 @@
 </template>
 
 <script>
-import VHeader from "./components/header/header.vue"
+import VHeader from "./components/header/header.vue";
+const ERR_NO=0;
 export default {
   name: 'App',
   components: {
@@ -34,6 +36,14 @@ export default {
     return{
       seller:{}
     };
+  },
+  created(){
+    this.$http.get('/api/seller').then((res)=>{
+      if(res.body.errno===ERR_NO){
+         console.log(res.body);
+        this.seller=res.body.data;
+      }
+    });
   }
 }
 </script>
