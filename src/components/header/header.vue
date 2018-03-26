@@ -28,19 +28,49 @@
     <div class="background">
       <img :src="seller.avatar">
     </div>
-    <div v-show="detailShow" class="detail">
-      <div class="wrapper clearfix">
-        <div class="main"></div>
+    <transition name="detail">
+      <div v-show="detailShow" class="detail">
+        <div class="wrapper clearfix">
+          <div class="main">
+            <h1 class="name">{{seller.name}}</h1>
+            <div class="star-wrapper">
+              <v-star :size="48" :score="seller.score"></v-star>
+            </div>
+            <div class="title">
+              <div class="line"></div>
+              <div class="text">优惠信息</div>
+              <div class="line"></div>
+            </div>
+            <ul v-if="seller.supports" class="supports">
+              <li class="support-item" v-for="(item,index) in seller.supports">
+                <span class="icon" :class="classMap[seller.supports[index].type]"></span>
+                <span class="text">{{seller.supports[index].description}}</span>
+              </li>
+            </ul>
+            <div class="title">
+              <div class="line"></div>
+              <div class="text">商家公告</div>
+              <div class="line"></div>
+            </div>
+            <div class="bulletin">
+              <p class="content">{{seller.bulletin}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="close" @click="detailShowFun">
+          <i class="fa fa-close"></i>
+        </div>
       </div>
-      <div class="close" @click="detailShowFun">
-        <i class="fa fa-close"></i>
-      </div>
-    </div>
+    </transition>
   </div>
 </template>
 
 <script>
+import VStar from '../star/star';
 export default {
+  components:{
+    VStar
+  },
   data () {
     return {
       detailShow:false
@@ -65,6 +95,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="less">
 @import url('../../assets/css/common.less');
+@imgUrl:"../../components/header/";
 .header{
   color:#fff;
   position: relative;
@@ -93,7 +124,8 @@ export default {
           display:inline-block;
           width:30px;
           height:18px;
-          background:url(./brand.png) no-repeat;
+          .bg-img("@{imgUrl}brand.png");
+          background-repeat:no-repeat;
           background-size:100% 100%;
           vertical-align:top;
         }
@@ -115,19 +147,19 @@ export default {
           background-size:100% 100%;
           background-repeat:no-repeat;
           &.decrease{
-            .bg-img('../../components/header/decrease_1.png');
+            .bg-img("@{imgUrl}decrease_1.png");
           }
           &.discount{
-            .bg-img('../../components/header/discount_1.png');
+            .bg-img('@{imgUrl}discount_1.png');
           }
           &.guarantee{
-            .bg-img('../../components/header/guarantee_1.png');
+            .bg-img('@{imgUrl}guarantee_1.png');
           }
           &.special{
-            .bg-img('../../components/header/special_1.png');
+            .bg-img('@{imgUrl}special_1.png');
           }
           &.invoice{
-            .bg-img('../../components/header/invoice_1.png');
+            .bg-img('@{imgUrl}invoice_1.png');
           }
         }
         .text{
@@ -171,7 +203,7 @@ export default {
       display: inline-block;
       width:22px;
       height:12px;
-      .bg-img('../../components/header/bulletin.png');
+      .bg-img('@{imgUrl}bulletin.png');
       background-size:100% 100%;
       background-repeat:no-repeat;
       vertical-align:top;
@@ -207,11 +239,98 @@ export default {
     height:100%;
     overflow: hidden;
     background-color:rgba(7,17,27,0.8);
+    backdrop-filter:blur(10px);
+    // 动画效果
+    &.detail-enter-active,&.detail-leave-active{
+      opacity:1;
+      transition:all  .5s;
+    }
+    &.detail-enter,&.detail-leave-to{
+      opacity:0;
+      background-color:rgba(7,17,27,0);
+    }
     .wrapper{
       min-height:100%;
+      width:100%;
       .main{
         margin-top:64px;
         padding-bottom:64px;
+        .name{
+          line-height:16px;
+          text-align:center;
+          font-size:16px;
+          font-weight:700;
+        }
+        .star-wrapper{
+          text-align:center;
+          margin-top:18px;
+          padding:2px 0;
+        }
+        .title{
+          display:flex;
+          width:80%;
+          margin:28px auto 24px auto;
+          .line{
+            flex:1;
+            position: relative;
+            top:-6px;
+            border-bottom:1px solid rgba(255,255,255,.2);
+          }
+          .text{
+            padding:0 12px;
+            font-size:14px;
+            font-weight:700;
+          }
+        }
+        .supports{
+          width:80%;
+          margin:0 auto;
+          .support-item{
+            padding:0 12px;
+            margin-bottom:12px;
+            font-size:0;
+            &:last-child{margin-bottom:0;}
+            .icon{
+              display: inline-block;
+              width:16px;
+              height:16px;
+              vertical-align:top;
+              margin-right:16px;
+              background-size:100% 100%;
+              background-repeat: no-repeat;
+              &.decrease{
+                .bg-img('@{imgUrl}decrease_2.png');
+              }
+              &.discount{
+                .bg-img('@{imgUrl}discount_2.png');
+              }
+              &.guarantee{
+                .bg-img('@{imgUrl}guarantee_2.png');
+              }
+              &.special{
+                .bg-img('@{imgUrl}special_2.png');
+              }
+              &.invoice{
+                .bg-img('@{imgUrl}invoice_2.png');
+              }
+            }
+            .text{
+              font-size:12px;
+              line-height:16px;
+            }
+          }
+          
+        }
+        .bulletin{
+          width:80%;
+          margin:0 auto;
+          .content{
+            font-size:12px;
+            line-height:24px;
+            padding:0 12px;
+            text-indent:2em;
+          }
+        }
       }
     }
     .close{
