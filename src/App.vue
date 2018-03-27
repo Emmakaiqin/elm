@@ -40,7 +40,6 @@ export default {
   created(){
     this.$http.get('/api/seller').then((res)=>{
       if(res.body.errno===ERR_NO){
-         console.log(res.body);
         this.seller=res.body.data;
       }
     });

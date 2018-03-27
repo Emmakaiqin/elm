@@ -239,7 +239,6 @@ export default {
     height:100%;
     overflow: hidden;
     background-color:rgba(7,17,27,0.8);
-    backdrop-filter:blur(10px);
     // 动画效果
     &.detail-enter-active,&.detail-leave-active{
       opacity:1;
