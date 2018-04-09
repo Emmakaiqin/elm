@@ -2,10 +2,9 @@
   <div class="goods">
     <div class="menu-wrapper" ref="menuWrapper">
       <ul>
-        <li v-for="item in goods" class="menu-item">
+        <li v-for="(item,index) in goods" @click="checkMenu(index,$event)" class="menu-item" :class="{'current':currentIndex==index}">
           <span class="text" >
-            <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>
-            {{item.name}}
+            <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span> {{item.name}}
           </span>
         </li>
       </ul>
@@ -34,56 +33,86 @@
         </li>
       </ul>
     </div>
+    <shop-cart></shop-cart>
   </div>
 </template>
 
 <script>
 import BScroll from 'better-scroll';
+import ShopCart from '../shopCart/shopCart';
 const ERR_NO=0;
 export default {
-  data () {
-    return {
-      goods:[],//存放从json获取到的数据
-      listHeight,//右侧菜单栏高度列表
-      scrollY//滑动高度
-    }
-  },
-  props:{
-    seller:{
-      type:Object
-    }
-  },
-  created(){
-    this.$http.get('/api/goods').then((res)=>{
-      if(res.body.errno===ERR_NO){
-        this.goods=res.body.data;
-        this.$nextTick(() => { //dom渲染完成后实现方法
-            this._initScroll();//滚动
-            this._calculateHeight();//实时监测滚动高度
-          });
-      }
-    });
-    this.classMap=['decrease','discount','guarantee','special','invoice']
-  },
-  methods:{
-    _initScroll(){//页面滚动方法
-      this.menuScroll=new BScroll(this.$refs.menuWrapper,{});
-      this.foodScroll=new BScroll(this.$refs.foodsWrapper,{
-        probeType:3//实时监听
-      });
+    components:{
+      ShopCart
     },
-    _calculateHeight(){//计算右侧食品栏目高度
-      let foodList=this.$refs.foodsWrapper.getElementsByClassName("food-list-hook");
-      let height=0;
-      this.listHeight.push(height);
-      for(let i=0;i<foodList.length;i++){
-        let item=foodList[i];
-        height+=item.clientHeight;
-        this.listHeight.push(height);//存入每一个food-list开始滑到的高度
+    data () {
+      return {
+        goods:[],//存放从json获取到的数据
+        listHeight:[],//右侧菜单栏高度列表
+        scrollY:0,//滑动高度
       }
+    },
+    props:{
+      seller:{
+        type:Object
+      }
+    },
+    computed:{
+      currentIndex(){//当前位置索引
+        for(let i=0;i<this.listHeight.length;i++){
+          let height1=this.listHeight[i];
+          let height2=this.listHeight[i+1];
+          if((this.scrollY>=height1&&this.scrollY<=height2)||!height2){
+            return i;
+          }
+        }
+        return 0;
+      }
+    },
+    created(){
+      this.$http.get('/api/goods').then((res)=>{
+        if(res.body.errno===ERR_NO){
+          this.goods=res.body.data;
+          this.$nextTick(() => { //dom渲染完成后实现方法
+              this._initScroll();//滚动
+              this._calculateHeight();//实时监测滚动高度
+            });
+        }
+      });
+      this.classMap=['decrease','discount','guarantee','special','invoice']
+    },
+    methods:{
+      _initScroll(){//页面滚动方法
+      this.menuScroll=new BScroll(this.$refs.menuWrapper,{
+        click:true
+      });
+      this.foodScroll=new BScroll(this.$refs.foodsWrapper,{
+        probeType:3//滚动时实时监听高度
+      });
+      this.foodScroll.on('scroll',(pos)=>{
+        this.scrollY=Math.abs(Math.round(pos.y));
+      })
+      },
+      _calculateHeight(){//计算右侧食品栏目高度
+        let foodList=this.$refs.foodsWrapper.getElementsByClassName("food-list-hook");
+        let height=0;
+        this.listHeight.push(height);
+        for(let i=0;i<foodList.length;i++){
+          let item=foodList[i];
+          height+=item.clientHeight;
+          this.listHeight.push(height);//存入每一个food-list开始滑到的高度
+        }
+      },
+      checkMenu(index,event){//当前想索引值 点击事件
+        if(!event._constructed){
+          return false;//阻止浏览器默认点击事件
+        }
+          let foodList=this.$refs.foodsWrapper.getElementsByClassName("food-list-hook");
+          let el=foodList[index];
+          this.foodScroll.scrollToElement(el,300);
+        }
     }
-  }
-}
+   }
 </script>
 <style lang="less">
 @import url('../../assets/css/common.less');
@@ -106,13 +135,13 @@ export default {
       width:56px;
       line-height:14px;
       padding:0 12px;
+      .border-bottom-1(rgba(7,17,27,0.1));
       .text{
         position: relative;
         font-size:12px;
         display:table-cell;
         width:56px;
         vertical-align:middle;
-        .border-bottom-1(rgba(7,17,27,0.1));
         .icon{
           display:inline-block;
           width:12px;
@@ -138,6 +167,11 @@ export default {
           }
         }
       }
+    }
+    .current{//当前选中的菜单
+      background-color:#fff;
+      z-index:10;
+      font-weight:700;
     }
   }
   .foods-wrapper{
